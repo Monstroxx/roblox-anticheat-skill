@@ -1,0 +1,15 @@
+# Local evaluation outputs contain machine paths and are not part of the skill.
+roblox-anticheat-workspace/
+
+# Generated files and local development environments.
+__pycache__/
+*.py[cod]
+.venv/
+node_modules/
+
+# Local credentials and editor/OS metadata.
+.env
+.env.*
+!.env.example
+.DS_Store
+Thumbs.db

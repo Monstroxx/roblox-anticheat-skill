@@ -1,0 +1,47 @@
+{
+  "skill_name": "roblox-anticheat",
+  "evals": [
+    {
+      "id": 1,
+      "name": "touch-reward",
+      "prompt": "Harden the touch pickup in the attached file against spoofed touch activation and duplicate rewards. Preserve normal movement. Scope: interactions only; reject invalid requests and use bounded logging; no movement correction or bans. Kicking for confirmed server-side cheating is my default policy; propose concrete evidence rules and do not activate a new punitive trigger without my confirmation. Provide a small Luau patch, reproducible tests, and remaining limitations. No follow-up answers are possible here: state unresolved decisions and continue the authorized non-punitive hardening. No Roblox runtime is available.",
+      "expected_output": "Minimal server-side touch protection with current-character resolution, plausible contact checks, single reward grants and ownership limitations; no punishment solely for an invalid touch.",
+      "files": ["evals/fixtures/touch-reward.luau"],
+      "assertions": [
+        "The patch resolves the current player character and checks server active/round eligibility before granting a reward.",
+        "The patch enforces at most one reward per player per current round, including repeated body-part touch notifications.",
+        "The answer explains that a server-visible distance or touch event alone does not prove a legitimate journey under client network ownership.",
+        "The answer preserves normal movement, does not kick solely for an invalid touch, and retains kick as the policy for subsequently approved confirmed evidence.",
+        "The answer gives both normal-contact and duplicate/invalid-contact test cases and labels Roblox runtime checks as not run."
+      ]
+    },
+    {
+      "id": 2,
+      "name": "remote-shop",
+      "prompt": "Review the attached Roblox shop. Players can hook or invoke the client and BuyItem arbitrarily. Secure the existing server handler without rebuilding the shop or movement. Preserve a legitimate purchase of Sword for 100 Coins per unit. Scope: remotes; reject invalid requests and use bounded logging; no movement correction or bans. Confirmed server-side cheating should result in a kick by default; explain rules before activating new ones, and do not treat malformed requests alone as proof. Provide a Luau patch, tests for NaN/Infinity, spam and concurrent purchases, and state what remains untested without Studio. No follow-up answers are possible; only propose unresolved punitive triggers.",
+      "expected_output": "Server catalog, bounded positive finite integer quantity, bounded ingress, serialization before yielding, and no claims of unhookable remotes or atomic multi-key DataStore transactions.",
+      "files": ["evals/fixtures/remote-shop.luau"],
+      "assertions": [
+        "The patch derives Sword price 100 from a server-owned catalog and ignores clientPrice while permitting a legitimate one-Sword purchase.",
+        "The patch rejects non-number, NaN, positive/negative infinity, non-positive, fractional and oversized quantity before protected mutation.",
+        "The patch applies a bounded per-player ingress rate limiter before expensive grant work and cleans per-player state on removal.",
+        "The patch reserves/serializes the purchase before Inventory.Grant yields, prevents overlapping spends and handles false/error grant outcomes without charging an ungranted item.",
+        "The answer does not claim unhookable client remotes or verified Studio behavior and does not automatically kick/ban solely for malformed requests."
+      ]
+    },
+    {
+      "id": 3,
+      "name": "teleport-policy",
+      "prompt": "I want optional teleport detection for my Roblox game. It has respawn, dash, vehicles, knockback, and server-authorized portal teleports. No movement rebuild or automatic position corrections. Start by observing movement signals; no bans. Kicking is the default for confirmed server-side cheating, not a single position jump or lag. Design a small integration with the existing teleport function, and show the kick path for an already audited server-to-client-only remote: all current and supported older clients are guaranteed never to call it from the client, and its kick rule is explicitly approved here. Show the decision table, Luau sketch, and tests. Studio is unavailable. Make no other changes to the movement architecture.",
+      "expected_output": "Observation-only movement with server-created bounded exceptions and lifecycle resets; an actual server-side kick only for the approved confirmed protocol violation; no bans or migration to Engine Server Authority.",
+      "files": [],
+      "assertions": [
+        "The answer records the user's selected protection and punishment policy including default kick for confirmed evidence, no bans and no movement correction.",
+        "Movement is observation-only with server-created bounded teleport exemption/baseline reset, and neither one jump nor accumulated weak movement indicators call Kick.",
+        "The answer resets movement state for respawn and addresses legitimate dash, vehicles, knockback, variable latency and server stalls rather than universal speed limits.",
+        "The Luau sketch actually calls Player:Kick on the server for the expressly authorized server-to-client-only remote receiving a client event, without using a client-supplied target identity.",
+        "The answer leaves the movement architecture unchanged, does not force Engine Server Authority, and distinguishes proposed Studio tests from executed tests."
+      ]
+    }
+  ]
+}
